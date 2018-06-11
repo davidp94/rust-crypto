@@ -9,6 +9,8 @@
 // except according to those terms.
 
 use std::iter::repeat;
+use std::vec::Vec;
+use std::string::String;
 
 /**
  * The Digest trait specifies an interface common to digest functions, such as SHA-1 and the SHA-2

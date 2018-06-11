@@ -12,6 +12,7 @@ use blockmodes::{PaddingProcessor, EcbEncryptor, EcbDecryptor, CbcEncryptor, Cbc
     CtrModeX8};
 use symmetriccipher::{Encryptor, Decryptor, SynchronousStreamCipher};
 use util;
+use std::boxed::Box;
 
 /// AES key size
 #[derive(Clone, Copy)]

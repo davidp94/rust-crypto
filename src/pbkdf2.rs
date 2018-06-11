@@ -11,9 +11,11 @@
 
 use std::iter::repeat;
 use std::io;
+use std::vec::Vec;
+use std::string::{String, ToString};
 use cryptoutil::copy_memory;
 
-use rand::{OsRng, Rng};
+use rand::{SgxRng, Rng};
 use serialize::base64;
 use serialize::base64::{FromBase64, ToBase64};
 
@@ -130,7 +132,7 @@ pub fn pbkdf2<M: Mac>(mac: &mut M, salt: &[u8], c: u32, output: &mut [u8]) {
  *
  */
 pub fn pbkdf2_simple(password: &str, c: u32) -> io::Result<String> {
-    let mut rng = try!(OsRng::new());
+    let mut rng = try!(SgxRng::new());
 
     // 128-bit salt
     let salt: Vec<u8> = rng.gen_iter::<u8>().take(16).collect();

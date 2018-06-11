@@ -46,6 +46,7 @@ assert_eq!(hex, "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe2451143153
  */
 
 use std::cmp;
+use std::vec::Vec;
 
 use digest::Digest;
 use cryptoutil::{write_u64v_le, read_u64v_le, zero};

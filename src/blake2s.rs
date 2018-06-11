@@ -5,6 +5,7 @@
 // except according to those terms.
 
 use std::iter::repeat;
+use std::vec::Vec;
 use cryptoutil::{copy_memory, read_u32v_le, write_u32v_le};
 use digest::Digest;
 use mac::{Mac, MacResult};

@@ -10,6 +10,7 @@
 
 use std::cmp;
 use std::iter::repeat;
+use std::vec::Vec;
 
 use buffer::{ReadBuffer, WriteBuffer, OwnedReadBuffer, OwnedWriteBuffer, BufferResult,
     RefReadBuffer, RefWriteBuffer};

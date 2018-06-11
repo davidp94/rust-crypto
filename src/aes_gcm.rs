@@ -9,6 +9,7 @@ use aead::{AeadEncryptor,AeadDecryptor};
 use cryptoutil::copy_memory;
 use symmetriccipher::SynchronousStreamCipher;
 use ghash::{Ghash};
+use std::boxed::Box;
 use util::fixed_time_eq;
 
 pub struct AesGcm<'a> {

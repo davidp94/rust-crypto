@@ -9,6 +9,7 @@
 
 use std::iter::repeat;
 use cryptoutil::copy_memory;
+use std::vec::Vec;
 
 use digest::Digest;
 use hmac::Hmac;

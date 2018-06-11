@@ -9,6 +9,7 @@
  */
 
 use std::iter::repeat;
+use std::vec::Vec;
 
 use cryptoutil;
 use digest::Digest;
