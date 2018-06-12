@@ -46,8 +46,7 @@
 
 use cryptoutil::copy_memory;
 
-use rand::{Rng, SeedableRng};
-use time::precise_time_s;
+use rand::{Rng, SeedableRng, SgxRng};
 
 use aessafe::AesSafe256Encryptor;
 use cryptoutil::read_u32_le;
@@ -180,7 +179,6 @@ pub struct Fortuna {
     pool: [Pool; NUM_POOLS],
     generator: FortunaGenerator,
     reseed_count: u32,
-    last_reseed_time: f64
 }
 
 impl Fortuna {
@@ -190,7 +188,6 @@ impl Fortuna {
             pool: [Pool::new(); NUM_POOLS],
             generator: FortunaGenerator::new(),
             reseed_count: 0,
-            last_reseed_time: 0.0
         }
     }
 
@@ -215,31 +212,8 @@ impl Rng for Fortuna {
     /// `MIN_POOL_SIZE` bytes of data in the first accumulator
     /// pool, this function will fail the task.
     fn fill_bytes(&mut self, dest: &mut [u8]) {
-        // Reseed if necessary
-        let now = precise_time_s();
-        if self.pool[0].count >= MIN_POOL_SIZE &&
-           now - self.last_reseed_time > 0.1 {
-            self.reseed_count += 1;
-            self.last_reseed_time = now;
-            // Compute key as Sha256d( key || s )
-            let mut hash = [0; (32 * NUM_POOLS)];
-            let mut n_pools = 0;
-            while self.reseed_count % (1 << n_pools) == 0 {
-                (&mut self.pool[n_pools]).result(&mut hash[n_pools * 32..(n_pools + 1) * 32]);
-                n_pools += 1;
-                assert!(n_pools < NUM_POOLS);
-                assert!(n_pools < 32); // width of counter
-            }
-            self.generator.reseed(&hash[..n_pools * 32]);
-        }
-        // Fail on unseeded RNG
-        if self.reseed_count == 0 {
-            panic!("rust-crypto: an unseeded Fortuna was asked for random bytes!");
-        }
-        // Generate return data
-        for dest in dest.chunks_mut(MAX_GEN_SIZE) {
-            self.generator.generate_random_data(dest);
-        }
+        let mut rng = SgxRng::new().unwrap();
+        rng.fill_bytes(dest);
     }
 
     fn next_u32(&mut self) -> u32 {
@@ -259,14 +233,8 @@ impl<'a> SeedableRng<&'a [u8]> for Fortuna {
 
     fn reseed(&mut self, seed: &'a [u8]) {
         self.reseed_count += 1;
-        self.last_reseed_time = precise_time_s();
         self.generator.reseed(seed);
     }
-}
-
-#[cfg(test)]
-fn test_force_reseed(f: &mut Fortuna) {
-    f.last_reseed_time -= 0.2;
 }
 
 #[cfg(test)]
